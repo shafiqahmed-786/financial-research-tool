@@ -1,0 +1,14 @@
+Flask
+flask-cors
+pdfplumber
+pandas
+openpyxl
+rapidfuzz
+python-dotenv
+Werkzeug
+flask
+flask-cors
+pdfplumber
+openpyxl
+pandas
+gunicorn
