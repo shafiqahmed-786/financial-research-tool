@@ -1,47 +1,58 @@
 import React, { useState } from "react";
-import { uploadFile, extractData } from "../api/api";
+
+const API_BASE = process.env.REACT_APP_API_BASE;
 
 function UploadSection({ setResult, setFileId }) {
   const [file, setFile] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
 
   const handleUpload = async () => {
     if (!file) return;
 
+    setError(null);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
     try {
-      setLoading(true);
-      setError("");
+      // Upload file
+      const uploadRes = await fetch(`${API_BASE}/upload`, {
+        method: "POST",
+        body: formData
+      });
 
-      const uploadRes = await uploadFile(file);
-      const id = uploadRes.data.file_id;
+      const uploadData = await uploadRes.json();
 
-      setFileId(id);
+      if (!uploadRes.ok) throw new Error("Upload failed");
 
-      const extractRes = await extractData(id);
-      setResult(extractRes.data);
+      setFileId(uploadData.file_id);
+
+      // Extract
+      const extractRes = await fetch(
+        `${API_BASE}/extract/${uploadData.file_id}`,
+        { method: "POST" }
+      );
+
+      const extractData = await extractRes.json();
+
+      if (!extractRes.ok) throw new Error("Extraction failed");
+
+      setResult(extractData);
+
     } catch (err) {
       setError("Upload or extraction failed.");
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
-    <div className="card">
-      <h2>Upload Financial Statement</h2>
-
+    <div>
       <input
         type="file"
         accept="application/pdf"
         onChange={(e) => setFile(e.target.files[0])}
       />
-
-      <button onClick={handleUpload} disabled={loading}>
-        {loading ? "Processing..." : "Upload & Analyze"}
-      </button>
-
-      {error && <p className="error">{error}</p>}
+      <button onClick={handleUpload}>Upload & Analyze</button>
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }
