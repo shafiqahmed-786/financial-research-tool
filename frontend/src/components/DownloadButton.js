@@ -1,19 +1,14 @@
-import React from "react";
 import { downloadExcel } from "../api/api";
 
 function DownloadButton({ fileId }) {
-  if (!fileId) return null;
+  const handleDownload = () => {
+    window.open(downloadExcel(fileId), "_blank");
+  };
 
   return (
-    <div className="card">
-      <a
-        href={downloadExcel(fileId)}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <button>Download Excel</button>
-      </a>
-    </div>
+    <button onClick={handleDownload}>
+      Download Excel
+    </button>
   );
 }
 
