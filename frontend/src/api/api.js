@@ -1,15 +1,8 @@
 import axios from "axios";
 
-/*
-  In production (Vercel), this will use:
-  REACT_APP_API_URL
-
-  Locally, it will fall back to:
-  http://127.0.0.1:5000/api
-*/
-
 const API_BASE =
-  process.env.REACT_APP_API_URL || "http://127.0.0.1:5000/api";
+  process.env.REACT_APP_API_URL ||
+  "http://127.0.0.1:5000/api";
 
 const API = axios.create({
   baseURL: API_BASE,
