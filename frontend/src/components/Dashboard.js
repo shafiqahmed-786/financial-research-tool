@@ -1,49 +1,54 @@
-function MetricCard({ title, value }) {
+import React from "react";
 
+function MetricCard({ title, value }) {
   const isPositive = value > 0;
+  const isNegative = value < 0;
 
   return (
-    <div style={{
-      padding: "20px",
-      background: "#f4f6f8",
-      borderRadius: "10px",
-      width: "220px",
-      boxShadow: "0 4px 12px rgba(0,0,0,0.05)"
-    }}>
-      <h4>{title}</h4>
-      <h2 style={{ color: isPositive ? "green" : "red" }}>
-        {value ? value.toFixed(2) + "%" : "N/A"}
-      </h2>
+    <div className="metric-card">
+      <div className="metric-title">{title}</div>
+
+      <div
+        className={`metric-value ${
+          isPositive ? "positive" : isNegative ? "negative" : ""
+        }`}
+      >
+        {value !== undefined && value !== null
+          ? `${value.toFixed(2)}%`
+          : "N/A"}
+      </div>
     </div>
   );
 }
 
 export default function Dashboard({ metrics }) {
-
   if (!metrics) return null;
 
-  const latest = Object.keys(metrics.ebitda_margin || {})[0];
+  // Get latest FY dynamically
+  const latestYear =
+    Object.keys(metrics.ebitda_margin || {})[0];
 
   return (
-    <div style={{ marginTop: "40px" }}>
-      <h2>Financial Dashboard</h2>
-      <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+    <div className="dashboard">
+      <h2 style={{ marginBottom: "20px" }}>
+        Financial Dashboard — {latestYear}
+      </h2>
 
+      <div className="metric-grid">
         <MetricCard
           title="EBITDA Margin"
-          value={metrics.ebitda_margin?.[latest]}
+          value={metrics.ebitda_margin?.[latestYear]}
         />
 
         <MetricCard
           title="PAT Margin"
-          value={metrics.pat_margin?.[latest]}
+          value={metrics.pat_margin?.[latestYear]}
         />
 
         <MetricCard
           title="Revenue Growth"
-          value={metrics.revenue_growth?.[latest]}
+          value={metrics.revenue_growth?.[latestYear]}
         />
-
       </div>
     </div>
   );
